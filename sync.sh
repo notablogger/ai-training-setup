@@ -34,7 +34,8 @@ AI_TRAINING="$HOME/ai_training"
 LEARNING="$AI_TRAINING/learning to code"
 
 # Compute memory key
-MEMORY_KEY=$(echo "$LEARNING" | sed 's|/|-|g' | sed 's| |-|g')
+# Claude Code keys memory by replacing every non-alphanumeric char with -
+MEMORY_KEY=$(echo "$LEARNING" | sed 's|[^a-zA-Z0-9]|-|g')
 MEMORY_DIR="$HOME/.claude/projects/$MEMORY_KEY/memory"
 
 echo ""

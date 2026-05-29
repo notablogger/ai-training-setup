@@ -32,7 +32,11 @@ Work project at Mercedes-Benz. Empty repo — no commits yet.
 ### drivin-uae.tsx
 Standalone React component at workspace root. Purpose unknown — likely an experiment.
 
+### ai-training-setup
+**Remote:** `github.com/notablogger/ai-training-setup`
+Portable workspace setup repo. Run `setup.sh` on a new Mac to bootstrap everything. Run `sync.sh` to sync CLAUDE.md, memory files, settings, and conversation log back to GitHub. Should be synced before migrating machines.
+
 ## GitHub
-Logged in as `notablogger` with `repo`, `workflow`, `gist`, `read:org` scopes. All three public repos (kafka, spring-xpose, spring-xpose-sample-rest) accessible via `gh` CLI.
+Logged in as `notablogger` with `repo`, `workflow`, `gist`, `read:org` scopes. All public repos accessible via `gh` CLI.
 
 Related: [[user-profile]]

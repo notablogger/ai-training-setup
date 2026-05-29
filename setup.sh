@@ -261,7 +261,8 @@ echo "── Step 13: Claude memory files ────────────�
 # Compute the project memory key from the workspace path
 # Claude replaces / and spaces in the path with - to form the directory key
 WORKSPACE_PATH="$LEARNING"
-MEMORY_KEY=$(echo "$WORKSPACE_PATH" | sed 's|/|-|g' | sed 's| |-|g')
+# Claude Code keys memory by replacing every non-alphanumeric char with -
+MEMORY_KEY=$(echo "$WORKSPACE_PATH" | sed 's|[^a-zA-Z0-9]|-|g')
 MEMORY_DIR="$HOME/.claude/projects/$MEMORY_KEY/memory"
 mkdir -p "$MEMORY_DIR"
 
