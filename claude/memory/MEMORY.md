@@ -1,0 +1,2 @@
+- [User profile](user.md) — Learning AI through building real projects; values "why" explanations; rebuilding kafka app across languages
+- [Project: kafka-ai](project.md) — Java phase complete (18 prompts, audited, tested); next phase is Go/Python/Node rebuild
