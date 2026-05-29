@@ -112,6 +112,22 @@ Work project at Mercedes-Benz. Python AI project — purpose and scope to be est
 
 ---
 
+### ai-training-setup
+**Path:** `ai-training-setup/`
+**Remote:** `github.com/notablogger/ai-training-setup`
+**Status:** Active — run `sync.sh` to keep up to date
+
+Portable workspace setup repo. Contains `setup.sh` (bootstraps a new Mac: installs tools, clones repos, copies Claude config), `sync.sh` (syncs current config back to the repo), and snapshots of: `CLAUDE.md`, `settings.json`, all memory files, and the conversation log. Clone + run on any Mac to get the full environment.
+
+**Commands:**
+```bash
+./setup.sh           # bootstrap a new machine
+./sync.sh            # sync current state to repo and push
+./sync.sh --dry-run  # preview what would change
+```
+
+---
+
 ### drivin-uae.tsx
 **Path:** `drivin-uae.tsx` (standalone file at workspace root)
 
