@@ -1,4 +1,17 @@
 {
   "model": "opus",
-  "effortLevel": "xhigh"
+  "effortLevel": "xhigh",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/goyalnik/.claude/hooks/auto-sync.sh"
+          }
+        ]
+      }
+    ]
+  }
 }
