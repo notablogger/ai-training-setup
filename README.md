@@ -53,7 +53,8 @@ The script will:
 | 12 | Generate workspace `settings.local.json` with correct paths for this user |
 | 13 | Copy Claude memory files to `~/.claude/projects/<key>/memory/` |
 | 14 | Copy conversation log to `~/ai_training/learning to code/AI docs/` |
-| 15 | Run `uv sync` on the Python project |
+| 15 | Install auto-sync hook + register it in `~/.claude/settings.json` |
+| 16 | Run `uv sync` on the Python project |
 
 All steps are **idempotent** — safe to re-run if something fails partway through.
 
@@ -86,6 +87,46 @@ code ~/ai_training/learning\ to\ code
 | `notablogger/spring-xpose-sample-rest` | `~/ai_training/spring-xpose/spring-xpose-sample-rest/` |
 
 > `python_ai` is on Mercedes-Benz internal git — clone manually if needed.
+
+---
+
+## Auto-Sync Hook
+
+Once set up, you don't need to run `sync.sh` manually. A Claude Code `PostToolUse` hook watches for edits to any tracked file and syncs automatically in the background.
+
+**Tracked files** (changes to any of these trigger a push):
+
+| File | What it contains |
+|---|---|
+| `~/ai_training/CLAUDE.md` | Workspace context + custom skills |
+| `~/.claude/settings.json` | Global Claude settings |
+| `~/.claude/projects/.../memory/MEMORY.md` | Memory index |
+| `~/.claude/projects/.../memory/user.md` | User profile |
+| `~/.claude/projects/.../memory/project.md` | Project state |
+| `~/ai_training/learning to code/AI docs/conversation-log.md` | Interaction log |
+
+**How it works:**
+1. Claude Code calls `Edit` or `Write` on a file
+2. The `PostToolUse` hook runs `~/.claude/hooks/auto-sync.sh`
+3. The script checks if the modified file is in the tracked list
+4. If yes, it runs `sync.sh` in the background (non-blocking)
+5. Changes are committed and pushed to GitHub automatically
+
+**Hook config** (written to `~/.claude/settings.json` by `setup.sh`):
+```json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [{ "type": "command", "command": "~/.claude/hooks/auto-sync.sh" }]
+      }
+    ]
+  }
+}
+```
+
+> **Note:** If you need to install the hook manually on an existing machine (e.g. Claude Code blocked the auto-install), approve the action when prompted or add the JSON above to `~/.claude/settings.json` and copy `claude/hooks/auto-sync.sh` to `~/.claude/hooks/auto-sync.sh`.
 
 ---
 

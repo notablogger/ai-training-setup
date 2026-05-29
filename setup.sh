@@ -293,10 +293,64 @@ else
 fi
 
 # ─────────────────────────────────────────────────────────────────────────────
-# STEP 15 — Python project: install deps
+# STEP 15 — Claude hook: auto-sync on tracked file changes
 # ─────────────────────────────────────────────────────────────────────────────
 echo ""
-echo "── Step 15: Python dependencies (kafka-ai-python) ───────────"
+echo "── Step 15: Claude hook — auto-sync ─────────────────────────"
+HOOKS_DIR="$HOME/.claude/hooks"
+HOOK_DEST="$HOOKS_DIR/auto-sync.sh"
+HOOK_SRC="$SCRIPT_DIR/claude/hooks/auto-sync.sh"
+GLOBAL_SETTINGS="$HOME/.claude/settings.json"
+mkdir -p "$HOOKS_DIR"
+
+# Install hook script
+if [[ -f "$HOOK_DEST" ]]; then
+    ok "auto-sync.sh hook already installed"
+else
+    cp "$HOOK_SRC" "$HOOK_DEST"
+    chmod +x "$HOOK_DEST"
+    ok "auto-sync.sh hook installed at $HOOK_DEST"
+fi
+
+# Add hook to ~/.claude/settings.json using python3 (avoids jq dependency)
+HOOK_REGISTERED=$(python3 -c "
+import json, sys
+with open('$GLOBAL_SETTINGS') as f:
+    s = json.load(f)
+hooks = s.get('hooks', {}).get('PostToolUse', [])
+for h in hooks:
+    if 'auto-sync' in str(h):
+        print('yes')
+        sys.exit()
+print('no')
+" 2>/dev/null || echo "no")
+
+if [[ "$HOOK_REGISTERED" == "yes" ]]; then
+    ok "auto-sync hook already registered in settings.json"
+else
+    python3 - <<PYEOF
+import json
+
+with open('$GLOBAL_SETTINGS') as f:
+    settings = json.load(f)
+
+settings.setdefault('hooks', {}).setdefault('PostToolUse', []).append({
+    "matcher": "Edit|Write",
+    "hooks": [{"type": "command", "command": "$HOOK_DEST"}]
+})
+
+with open('$GLOBAL_SETTINGS', 'w') as f:
+    json.dump(settings, f, indent=2)
+PYEOF
+    ok "auto-sync hook registered in ~/.claude/settings.json"
+    warn "Restart Claude Code for the hook to take effect."
+fi
+
+# ─────────────────────────────────────────────────────────────────────────────
+# STEP 16 — Python project: install deps
+# ─────────────────────────────────────────────────────────────────────────────
+echo ""
+echo "── Step 16: Python dependencies (kafka-ai-python) ───────────"
 PYTHON_PROJECT="$LEARNING/kafka-ai-python"
 if [[ -d "$PYTHON_PROJECT" ]]; then
     info "Running uv sync in kafka-ai-python..."
